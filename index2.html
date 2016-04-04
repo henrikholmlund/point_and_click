@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Phaser - Making your first game, part 9</title>
+    <script type="text/javascript" src="js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+    var game = new Phaser.Game(1024, 640, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+    function preload() {
+
+        game.load.image('sky', 'assets/monkeybackground2.png');
+        game.load.image('earth', 'assets/earth.png');
+        game.load.image('earth', 'assets/star.png');
+        game.load.spritesheet('dude', 'assets/gb_walk.png', 100, 150);
+
+    }
+
+    var player;
+    var cursors;
+    var earth;
+    var star;
+
+
+
+    function create() {
+
+
+        game.physics.startSystem(Phaser.Physics.ARCADE);
+
+
+        game.add.sprite(0, 0, 'sky');
+
+        earth = game.add.sprite(0, 0, 'earth');
+        earth.inputEnabled = true;
+        earth.enableBody = true;
+
+        earth.events.onInputDown.add(info, this);
+
+        star = game.add.sprite(500, 500, 'star');
+        star.enableBody = true;
+
+        //lägger fysik på jorden
+
+        game.physics.enable(earth, Phaser.Physics.ARCADE);
+        game.physics.enable(star, Phaser.Physics.ARCADE);
+
+
+
+
+
+    }
+
+    function update() {
+
+        game.physics.arcade.moveToObject(earth, star);
+
+        if (game.input.activePointer.isDown)
+        {
+            star.kill();
+            star = game.add.sprite(game.input.mousePointer.x, game.input.mousePointer.y, 'star');
+            star.enableBody = true;
+            game.physics.enable(star, Phaser.Physics.ARCADE);
+
+            star.body.y = game.input.mousePointer.y;
+            star.body.x = game.input.mousePointer.x;
+
+        }
+
+        game.physics.arcade.overlap(earth, star, stopEarth, null, this);
+
+
+    }
+
+    function stopEarth() {
+        earth.body.velocity.x = 0;
+        earth.body.velocity.y = 0;
+    }
+
+    function info(){
+        alert("du klickade på jorden");
+        console.log(this);
+    }
+
+
+
+</script>
+
+</body>
+</html>
